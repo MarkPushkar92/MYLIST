@@ -54,20 +54,25 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        cell.backgroundColor = .cyan
         cell.textLabel?.text = mockArray[indexPath.row]
         cell.imageView?.image = UIImage(named: mockArray[indexPath.row])
+        cell.imageView?.layer.cornerRadius = cell.frame.size.height/2
+        cell.imageView?.clipsToBounds = true
         return cell
     }
 }
 
 extension ViewController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 85
+    }
+    
 }
 
 private extension ViewController {
-        func setupViews() {
-        title = "My List"
+    func setupViews() {
+        navigationController?.navigationBar.topItem?.title = "My list"
         view.addSubview(tableView)
         view.backgroundColor = .systemBackground
         let constraints = [
