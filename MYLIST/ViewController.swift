@@ -10,13 +10,9 @@ import UIKit
 class ViewController: UIViewController {
     
     //MARK: PROPERTIES
-   
-    private let mockArray = [
-        "Burger Heroes", "Kitchen", "Bonsai", "Дастархан",
-        "Индокитай", "X.O", "Балкан Гриль", "Sherlock Holmes",
-        "Speak Easy", "Morris Pub", "Вкусные истории",
-        "Классик", "Love&Life", "Шок", "Бочка"
-    ]
+
+    
+    private var places: [Place] = Place.getPlaces()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -49,15 +45,15 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mockArray.count
+        return places.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        cell.textLabel?.text = mockArray[indexPath.row]
-        cell.imageView?.image = UIImage(named: mockArray[indexPath.row])
-        cell.imageView?.layer.cornerRadius = cell.frame.size.height/2
-        cell.imageView?.clipsToBounds = true
+        cell.image.image = UIImage(named: places[indexPath.row].image)
+        cell.nameLabel.text = places[indexPath.row].name
+        cell.locationLabel.text = places[indexPath.row].location
+        cell.typeLabel.text = places[indexPath.row].type
         return cell
     }
 }
@@ -65,7 +61,7 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 85
+        return 90
     }
     
 }
