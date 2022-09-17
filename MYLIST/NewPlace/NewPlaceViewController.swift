@@ -1,18 +1,16 @@
 //
-//  ViewController.swift
+//  NewPlaceViewController.swift
 //  MYLIST
 //
-//  Created by Марк Пушкарь on 12.09.2022.
+//  Created by Марк Пушкарь on 16.09.2022.
 //
 
+import Foundation
 import UIKit
 
-class ViewController: UIViewController {
+class NewPlaceViewController: UIViewController {
     
     //MARK: PROPERTIES
-
-    
-    private var places: [Place] = Place.getPlaces()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -20,7 +18,7 @@ class ViewController: UIViewController {
         tableView.toAutoLayout()
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: cellID)
+        tableView.register(NewPlaceTableViewCell.self, forCellReuseIdentifier: cellID)
         return tableView
     }()
     
@@ -29,7 +27,9 @@ class ViewController: UIViewController {
     
     //MARK: FUNCS
     
-   
+    @objc func saveButtonPressed() {
+        print("save button pressed")
+    }
     
     //MARK: LIFECYCLE
     
@@ -42,33 +42,49 @@ class ViewController: UIViewController {
 
 //MARK: EXTENSIONS
 
-extension ViewController: UITableViewDataSource {
-    
+extension NewPlaceViewController: UITableViewDataSource {
+         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return places.count
+        return 4
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        cell.image.image = UIImage(named: places[indexPath.row].image)
-        cell.nameLabel.text = places[indexPath.row].name
-        cell.locationLabel.text = places[indexPath.row].location
-        cell.typeLabel.text = places[indexPath.row].type
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
+        switch indexPath.row {
+            case 0:
+            cell.setupImageView()
+            case 1:
+            cell.setupViews()
+            cell.textField.placeholder = "Enter location name"
+            case 2:
+            cell.setupViews()
+            cell.textField.placeholder = "Enter location"
+            case 3:
+            cell.setupViews()
+            cell.textField.placeholder = "Enter location type"
+            default:
+            break
+        }
         return cell
     }
 }
 
-extension ViewController: UITableViewDelegate {
+extension NewPlaceViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 90
+        switch indexPath.row {
+            case 0:
+            return 180
+            default:
+            return 50
+        }
     }
     
 }
 
-private extension ViewController {
+private extension NewPlaceViewController {
     func setupViews() {
-        navigationController?.navigationBar.topItem?.title = "My list"
+        navigationController?.navigationBar.topItem?.title = "My List"
         view.addSubview(tableView)
         view.backgroundColor = .systemBackground
         let constraints = [
@@ -78,6 +94,10 @@ private extension ViewController {
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
+        let saveButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveButtonPressed))
+        navigationItem.rightBarButtonItem = saveButton
     }
+    
+    
 }
 
