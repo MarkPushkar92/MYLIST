@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		633FE02D28DD88A20062D334 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633FE02C28DD88A20062D334 /* Header.swift */; };
 		635631EC28D44E9100640A5C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635631EB28D44E9100640A5C /* Model.swift */; };
 		635631EE28D4543B00640A5C /* NewPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635631ED28D4543B00640A5C /* NewPlaceViewController.swift */; };
 		63B6909B28CF186700305118 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B6909A28CF186700305118 /* AppDelegate.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		633FE02C28DD88A20062D334 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		635631EB28D44E9100640A5C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		635631ED28D4543B00640A5C /* NewPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaceViewController.swift; sourceTree = "<group>"; };
 		63B6909728CF186700305118 /* MYLIST.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MYLIST.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				635631ED28D4543B00640A5C /* NewPlaceViewController.swift */,
+				633FE02C28DD88A20062D334 /* Header.swift */,
 				63F9924828D5AB3F006A60EE /* NewPlaceTableViewCell.swift */,
 			);
 			path = NewPlace;
@@ -170,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63F9924928D5AB3F006A60EE /* NewPlaceTableViewCell.swift in Sources */,
+				633FE02D28DD88A20062D334 /* Header.swift in Sources */,
 				63B690B528CF210D00305118 /* CommonExtensions.swift in Sources */,
 				63B6909F28CF186700305118 /* ViewController.swift in Sources */,
 				63B690B328CF20BD00305118 /* TableViewCell.swift in Sources */,

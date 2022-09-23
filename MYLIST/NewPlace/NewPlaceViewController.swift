@@ -8,9 +8,11 @@
 import Foundation
 import UIKit
 
-class NewPlaceViewController: UIViewController {
+class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
+    
+    private var header = NewPlaceHeaderView()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -26,6 +28,22 @@ class NewPlaceViewController: UIViewController {
    
     
     //MARK: FUNCS
+    
+    @objc func handleTapOnHeader() {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let camera = UIAlertAction(title: "Camera", style: .default) { _ in
+            self.chooseImagePicker(source: .camera)
+        }
+        let photo = UIAlertAction(title: "Photo", style: .default) { _ in
+            self.chooseImagePicker(source: .photoLibrary)
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        actionSheet.addAction(camera)
+        actionSheet.addAction(photo)
+        actionSheet.addAction(cancel)
+        present(actionSheet, animated: true)
+    }
     
     @objc func saveButtonPressed() {
         print("save button pressed")
@@ -43,9 +61,7 @@ class NewPlaceViewController: UIViewController {
         } else {
             tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
         }
-
         tableView.scrollIndicatorInsets = tableView.contentInset
-
     }
     
     //MARK: LIFECYCLE
@@ -60,16 +76,16 @@ class NewPlaceViewController: UIViewController {
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        
+
     }
 }
 
-//MARK: EXTENSIONS TABLEVIEW DELEGATE & DATA SOURCE
+//MARK: EXTENSIONS TABLEVIEW DATA SOURCE
 
 extension NewPlaceViewController: UITableViewDataSource {
          
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,45 +93,78 @@ extension NewPlaceViewController: UITableViewDataSource {
         cell.textField.delegate = self
         switch indexPath.row {
             case 0:
-            cell.setupImageView()
-            case 1:
-            cell.setupViews()
             cell.textField.placeholder = "Enter location name"
-            case 2:
-            cell.setupViews()
+            case 1:
             cell.textField.placeholder = "Enter location"
-            case 3:
-            cell.setupViews()
+            case 2:
             cell.textField.placeholder = "Enter location type"
             default:
             break
         }
         return cell
     }
+    
+//MARK: EXTENSIONS TABLEVIEW DATA SOURCE (HEADER)
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerview = header
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnHeader))
+        tapRecognizer.delegate = self
+        tapRecognizer.numberOfTapsRequired = 1
+        tapRecognizer.numberOfTouchesRequired = 1
+        headerview.addGestureRecognizer(tapRecognizer)
+        return headerview
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 220
+    }
 }
+
+//MARK: EXTENSIONS TABLEVIEW DELEGATE
 
 extension NewPlaceViewController: UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.row {
-            case 0:
-            return 200
-            default:
-            return 50
-        }
+        return 50
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            
-        } else {
-            view.endEditing(true)
-        }
-    }
-    
 }
 
-//MARK: EXTENSIONS (PRIVATE)
+
+//MARK: EXTENSION FOR KEYGOARD HIDING
+extension NewPlaceViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+//MARK: EXTENSION WORKING WITH IMAGES
+
+extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func chooseImagePicker(source: UIImagePickerController.SourceType) {
+        if UIImagePickerController.isSourceTypeAvailable(source) {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.allowsEditing = true
+            imagePicker.sourceType = source
+            present(imagePicker, animated: true)
+        }
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[.editedImage] as? UIImage
+        header.image.image = image
+        header.image.clipsToBounds = true
+        header.image.contentMode = .scaleAspectFill
+        tableView.reloadData()
+        dismiss(animated: true)
+        
+    }
+
+}
+
+//MARK: EXTENSION (PRIVATE)
 
 private extension NewPlaceViewController {
     func setupViews() {
@@ -133,12 +182,3 @@ private extension NewPlaceViewController {
         navigationItem.rightBarButtonItem = saveButton
     }
 }
-
-extension NewPlaceViewController: UITextFieldDelegate {
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-}
-

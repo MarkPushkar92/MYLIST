@@ -9,14 +9,14 @@ import UIKit
 
 class NewPlaceTableViewCell: UITableViewCell {
     
-    var image: UIImageView = {
-        let imageView = UIImageView()
-        imageView.toAutoLayout()
-        imageView.contentMode = .center
-        imageView.backgroundColor = .lightGray
-        imageView.image = UIImage(named: "Photo")
-        return imageView
-    }()
+//    var image: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.toAutoLayout()
+//        imageView.contentMode = .center
+//        imageView.backgroundColor = .lightGray
+//        imageView.image = UIImage(named: "Photo")
+//        return imageView
+//    }()
     
     var textField: UITextField = {
         let textField = UITextField()
@@ -26,6 +26,7 @@ class NewPlaceTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViews()
      }
     
     
@@ -38,20 +39,24 @@ class NewPlaceTableViewCell: UITableViewCell {
         let constraints = [
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            textField.heightAnchor.constraint(equalTo: contentView.heightAnchor)
+           // textField.heightAnchor.constraint(equalTo: contentView.heightAnchor)
+            textField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
     }
-
-    func setupImageView() {
-        contentView.addSubview(image)
-        let constraints = [
-            image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            image.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            image.heightAnchor.constraint(equalTo: contentView.heightAnchor)
-        ]
-        NSLayoutConstraint.activate(constraints)
-    }
+//
+//    func setupImageView() {
+//        contentView.addSubview(image)
+//        let constraints = [
+//            image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
+//            image.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
+//          //  image.heightAnchor.constraint(equalTo: contentView.heightAnchor)
+//            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+//            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+//        ]
+//        NSLayoutConstraint.activate(constraints)
+//    }
 }
 
 
