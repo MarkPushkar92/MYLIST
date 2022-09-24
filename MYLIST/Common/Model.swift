@@ -5,13 +5,14 @@
 //  Created by Марк Пушкарь on 16.09.2022.
 //
 
-import Foundation
+import UIKit
 
 struct Place {
     var name: String
-    var location: String
-    var type: String
-    var image: String
+    var location: String?
+    var type: String?
+    var image: UIImage?
+    var restarauntImage: String?
     
     
     static private let mockArray = [
@@ -24,7 +25,7 @@ struct Place {
     static func getPlaces() -> [Place] {
         var places = [Place]()
         for place in mockArray {
-            places.append(Place(name: place, location: "Unknown", type: "Restaurant", image: place))
+            places.append(Place(name: place, location: "Unknown", type: "Restaurant", image: nil, restarauntImage: place))
         }
         return places
     }

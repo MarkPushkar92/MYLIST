@@ -52,7 +52,7 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        cell.image.image = UIImage(named: places[indexPath.row].image)
+        cell.image.image = UIImage(named: places[indexPath.row].restarauntImage!)
         cell.nameLabel.text = places[indexPath.row].name
         cell.locationLabel.text = places[indexPath.row].location
         cell.typeLabel.text = places[indexPath.row].type

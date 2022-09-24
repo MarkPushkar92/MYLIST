@@ -12,6 +12,8 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
     
+    var place: Place?
+    
     private var header = NewPlaceHeaderView()
     
     private lazy var tableView: UITableView = {
@@ -25,19 +27,25 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     }()
     
     private let cellID = "cellID"
-   
     
+    private let saveButton  = UIBarButtonItem(title: "Save", style: .plain, target: nil, action: #selector(saveButtonPressed))
+   
     //MARK: FUNCS
     
     @objc func handleTapOnHeader() {
+        let cameraImage = UIImage(named: "camera")
+        let photoLibImage = UIImage(named: "photo")
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let camera = UIAlertAction(title: "Camera", style: .default) { _ in
             self.chooseImagePicker(source: .camera)
         }
+        camera.setValue(cameraImage, forKey: "image")
+        camera.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
         let photo = UIAlertAction(title: "Photo", style: .default) { _ in
             self.chooseImagePicker(source: .photoLibrary)
         }
-        
+        photo.setValue(photoLibImage, forKey: "image")
+        photo.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         actionSheet.addAction(camera)
         actionSheet.addAction(photo)
@@ -48,35 +56,13 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     @objc func saveButtonPressed() {
         print("save button pressed")
     }
-    
-    // KEYBOARD ADJUSTING
-    @objc func adjustForKeyboard(notification: Notification) {
-        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
 
-        let keyboardScreenEndFrame = keyboardValue.cgRectValue
-        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-
-        if notification.name == UIResponder.keyboardWillHideNotification {
-            tableView.contentInset = .zero
-        } else {
-            tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
-        }
-        tableView.scrollIndicatorInsets = tableView.contentInset
-    }
-    
     //MARK: LIFECYCLE
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        tableView.keyboardDismissMode = .interactive
         
-        //KEYBOARD NOTIFICATIONS
-    
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-
     }
 }
 
@@ -94,6 +80,7 @@ extension NewPlaceViewController: UITableViewDataSource {
         switch indexPath.row {
             case 0:
             cell.textField.placeholder = "Enter location name"
+            cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
             case 1:
             cell.textField.placeholder = "Enter location"
             case 2:
@@ -130,11 +117,35 @@ extension NewPlaceViewController: UITableViewDelegate {
 }
 
 
-//MARK: EXTENSION FOR KEYGOARD HIDING
+//MARK: EXTENSION FOR KEYGOARD AND TEXTFIELDS
 extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    @objc private func textFieldChanged(textField: UITextField) {
+        if textField.text?.isEmpty == false {
+            saveButton.isEnabled = true
+        } else {
+            saveButton.isEnabled = false
+        }
+    }
+
+    
+    // KEYBOARD ADJUSTING
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            tableView.contentInset = .zero
+        } else {
+            tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+        tableView.scrollIndicatorInsets = tableView.contentInset
     }
 }
 
@@ -159,9 +170,7 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
         header.image.contentMode = .scaleAspectFill
         tableView.reloadData()
         dismiss(animated: true)
-        
     }
-
 }
 
 //MARK: EXTENSION (PRIVATE)
@@ -178,7 +187,14 @@ private extension NewPlaceViewController {
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
-        let saveButton  = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveButtonPressed))
         navigationItem.rightBarButtonItem = saveButton
+        tableView.keyboardDismissMode = .interactive
+        saveButton.isEnabled = false
+        
+        //KEYBOARD NOTIFICATIONS
+    
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 }
