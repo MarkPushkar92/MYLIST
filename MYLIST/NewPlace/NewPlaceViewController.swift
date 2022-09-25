@@ -12,7 +12,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
     
-    var place: Place?
+    var place: Place? = Place(name: "")
     
     private var header = NewPlaceHeaderView()
     
@@ -55,6 +55,8 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @objc func saveButtonPressed() {
         print("save button pressed")
+        place?.image = header.image.image
+        print("place name: \(place?.name), place location: \(place?.location), place type: \(place?.type)")
     }
 
     //MARK: LIFECYCLE
@@ -77,6 +79,7 @@ extension NewPlaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
         cell.textField.delegate = self
+        cell.textField.tag = indexPath.row
         switch indexPath.row {
             case 0:
             cell.textField.placeholder = "Enter location name"
@@ -118,6 +121,7 @@ extension NewPlaceViewController: UITableViewDelegate {
 
 
 //MARK: EXTENSION FOR KEYGOARD AND TEXTFIELDS
+
 extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -132,6 +136,28 @@ extension NewPlaceViewController: UITextFieldDelegate {
         }
     }
 
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField.tag {
+        case 0:
+            print(textField.text)
+            place?.name = textField.text ?? "name's not given"
+        case 1:
+            print(textField.text)
+            place?.location = textField.text
+        case 2:
+            print(textField.text)
+            place?.type = textField.text
+        default:
+            break
+            
+        }
+    }
+    
+    enum TextFieldData: Int {
+        case nameTextField = 0
+        case locationTextField
+        case locationTypeTextField
+    }
     
     // KEYBOARD ADJUSTING
     @objc func adjustForKeyboard(notification: Notification) {
