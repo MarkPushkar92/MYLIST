@@ -11,7 +11,7 @@ class ViewController: UIViewController {
     
     //MARK: PROPERTIES
     
-    private var places: [Place] = Place.getPlaces()
+    static var places: [Place] = Place.getPlaces()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -35,6 +35,14 @@ class ViewController: UIViewController {
     
     //MARK: LIFECYCLE
     
+    
+    // gotta fix it later
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -47,15 +55,22 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return places.count
+        return ViewController.places.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        cell.image.image = UIImage(named: places[indexPath.row].restarauntImage!)
-        cell.nameLabel.text = places[indexPath.row].name
-        cell.locationLabel.text = places[indexPath.row].location
-        cell.typeLabel.text = places[indexPath.row].type
+        
+        let place = ViewController.places[indexPath.row]
+        cell.nameLabel.text = place.name
+        cell.locationLabel.text = place.location
+        cell.typeLabel.text = place.type
+        
+        if place.image == nil {
+            cell.image.image = UIImage(named: place.restarauntImage!)
+        } else {
+            cell.image.image = place.image
+        }
         return cell
     }
 }

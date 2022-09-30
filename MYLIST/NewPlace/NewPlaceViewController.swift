@@ -12,7 +12,9 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
     
-    var place: Place? = Place(name: "")
+    private var imageIsChanged = false
+    
+    private var place: Place? = Place(name: "")
     
     private var header = NewPlaceHeaderView()
     
@@ -54,9 +56,16 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func saveButtonPressed() {
-        print("save button pressed")
-        place?.image = header.image.image
-        print("place name: \(place?.name), place location: \(place?.location), place type: \(place?.type)")
+        var image: UIImage?
+        if imageIsChanged {
+            image = header.image.image
+        } else {
+            image = UIImage(named: "imagePlaceholder")
+        }
+        place?.image = image
+        ViewController.places.append(place!)
+        print(ViewController.places)
+        navigationController?.popToRootViewController(animated: true)
     }
 
     //MARK: LIFECYCLE
@@ -64,7 +73,6 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        
     }
 }
 
@@ -139,24 +147,14 @@ extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         switch textField.tag {
         case 0:
-            print(textField.text)
             place?.name = textField.text ?? "name's not given"
         case 1:
-            print(textField.text)
             place?.location = textField.text
         case 2:
-            print(textField.text)
             place?.type = textField.text
         default:
             break
-            
         }
-    }
-    
-    enum TextFieldData: Int {
-        case nameTextField = 0
-        case locationTextField
-        case locationTypeTextField
     }
     
     // KEYBOARD ADJUSTING
@@ -194,6 +192,7 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
         header.image.image = image
         header.image.clipsToBounds = true
         header.image.contentMode = .scaleAspectFill
+        imageIsChanged = true
         tableView.reloadData()
         dismiss(animated: true)
     }
