@@ -6,27 +6,19 @@
 //
 
 import UIKit
+import RealmSwift
 
-struct Place {
-    var name: String
-    var location: String?
-    var type: String?
-    var image: UIImage?
-    var restarauntImage: String?
+class Place: Object {
+    @objc dynamic var name = ""
+    @objc dynamic var location: String?
+    @objc dynamic var type: String?
+    @objc dynamic var imageData: Data?
     
-    
-    static private let mockArray = [
-         "Burger Heroes", "Kitchen", "Bonsai", "Дастархан",
-         "Индокитай", "X.O", "Балкан Гриль", "Sherlock Holmes",
-         "Speak Easy", "Morris Pub", "Вкусные истории",
-         "Классик", "Love&Life", "Шок", "Бочка"
-     ]
-    
-    static func getPlaces() -> [Place] {
-        var places = [Place]()
-        for place in mockArray {
-            places.append(Place(name: place, location: "Unknown", type: "Restaurant", image: nil, restarauntImage: place))
-        }
-        return places
+    convenience init(name: String, location: String?, type: String?, imageData: Data?) {
+        self.init()
+        self.name = name
+        self.location = location
+        self.type = type
+        self.imageData = imageData
     }
 }

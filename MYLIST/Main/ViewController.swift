@@ -6,12 +6,13 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ViewController: UIViewController {
     
     //MARK: PROPERTIES
     
-    static var places: [Place] = Place.getPlaces()
+    var places: Results<Place>!
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -46,6 +47,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        places = realm.objects(Place.self)
         
     }
 }
@@ -55,22 +57,17 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ViewController.places.count
+        return places.isEmpty ? 0 :  places.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
         
-        let place = ViewController.places[indexPath.row]
+        let place = places[indexPath.row]
         cell.nameLabel.text = place.name
         cell.locationLabel.text = place.location
         cell.typeLabel.text = place.type
-        
-        if place.image == nil {
-            cell.image.image = UIImage(named: place.restarauntImage!)
-        } else {
-            cell.image.image = place.image
-        }
+        cell.image.image = UIImage(data: place.imageData!)
         return cell
     }
 }

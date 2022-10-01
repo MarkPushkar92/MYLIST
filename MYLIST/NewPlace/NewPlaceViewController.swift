@@ -12,9 +12,11 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
     
-    private var imageIsChanged = false
+    private var name: String?
+    private var location: String?
+    private var type: String?
     
-    private var place: Place? = Place(name: "")
+    private var imageIsChanged = false
     
     private var header = NewPlaceHeaderView()
     
@@ -56,15 +58,16 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func saveButtonPressed() {
+        let place: Place
         var image: UIImage?
         if imageIsChanged {
             image = header.image.image
         } else {
             image = UIImage(named: "imagePlaceholder")
         }
-        place?.image = image
-        ViewController.places.append(place!)
-        print(ViewController.places)
+        let imageData = image?.pngData()
+        place = Place(name: name ?? "name's not set", location: location, type: type, imageData: imageData)
+        StorageManager.saveObject(place)
         navigationController?.popToRootViewController(animated: true)
     }
 
@@ -147,11 +150,11 @@ extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         switch textField.tag {
         case 0:
-            place?.name = textField.text ?? "name's not given"
+            name = textField.text
         case 1:
-            place?.location = textField.text
+            location = textField.text
         case 2:
-            place?.type = textField.text
+            type = textField.text
         default:
             break
         }
