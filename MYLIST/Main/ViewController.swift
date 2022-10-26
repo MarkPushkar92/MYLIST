@@ -78,6 +78,24 @@ extension ViewController: UITableViewDelegate {
         return 90
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let place = places[indexPath.row]
+            StorageManager.deleteObj(place)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
+//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let place = places[indexPath.row]
+//        let deleteAction = UIContextualAction(style: .destructive, title: "Remove") { _, _, _ in
+//            StorageManager.deleteObj(place)
+//            tableView.deleteRows(at: [indexPath], with: .automatic)
+//        }
+//        return UISwipeActionsConfiguration(actions: [deleteAction])
+//    }
+    
+
 }
 
 private extension ViewController {
