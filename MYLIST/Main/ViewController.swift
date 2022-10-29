@@ -48,7 +48,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         places = realm.objects(Place.self)
-        
     }
 }
 
@@ -62,7 +61,6 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! TableViewCell
-        
         let place = places[indexPath.row]
         cell.nameLabel.text = place.name
         cell.locationLabel.text = place.location
@@ -85,17 +83,13 @@ extension ViewController: UITableViewDelegate {
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
-    
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let place = places[indexPath.row]
-//        let deleteAction = UIContextualAction(style: .destructive, title: "Remove") { _, _, _ in
-//            StorageManager.deleteObj(place)
-//            tableView.deleteRows(at: [indexPath], with: .automatic)
-//        }
-//        return UISwipeActionsConfiguration(actions: [deleteAction])
-//    }
-    
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = NewPlaceViewController()
+        let place = places[indexPath.row]
+        vc.currentPlace = place
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 private extension ViewController {
@@ -110,7 +104,6 @@ private extension ViewController {
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
-        
         let addPlaceButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
         navigationItem.rightBarButtonItem = addPlaceButton
     }

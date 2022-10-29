@@ -12,6 +12,8 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: PROPERTIES
     
+    var currentPlace: Place?
+    
     private var name: String?
     private var location: String?
     private var type: String?
@@ -67,8 +69,35 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         }
         let imageData = image?.pngData()
         place = Place(name: name ?? "name's not set", location: location, type: type, imageData: imageData)
-        StorageManager.saveObject(place)
+        
+        if currentPlace != nil {
+            try! realm.write({
+                currentPlace?.name = place.name
+                currentPlace?.location = place.location
+                currentPlace?.type = place.type
+                currentPlace?.imageData = imageData
+            })
+        } else {
+            StorageManager.saveObject(place)
+        }
         navigationController?.popToRootViewController(animated: true)
+    }
+    
+    private func setUpEdittingScreen() {
+        if currentPlace != nil {
+            setupNavigationBarForEdittingScreen()
+            imageIsChanged = true
+            guard let image = currentPlace?.imageData else { return }
+            header.image.contentMode = .scaleAspectFit
+            header.image.image = UIImage(data: image)
+            
+        }
+    }
+    
+    private func setupNavigationBarForEdittingScreen() {
+        title = currentPlace?.name
+        saveButton.isEnabled = true
+        
     }
 
     //MARK: LIFECYCLE
@@ -76,6 +105,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setUpEdittingScreen()
     }
 }
 
@@ -91,16 +121,30 @@ extension NewPlaceViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
         cell.textField.delegate = self
         cell.textField.tag = indexPath.row
-        switch indexPath.row {
-            case 0:
-            cell.textField.placeholder = "Enter location name"
-            cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
-            case 1:
-            cell.textField.placeholder = "Enter location"
-            case 2:
-            cell.textField.placeholder = "Enter location type"
-            default:
-            break
+        if currentPlace != nil {
+            switch indexPath.row {
+                case 0:
+                cell.textField.text = currentPlace?.name
+                cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+                case 1:
+                cell.textField.text = currentPlace?.location
+                case 2:
+                cell.textField.text = currentPlace?.type
+                default:
+                break
+            }
+        } else {
+            switch indexPath.row {
+                case 0:
+                cell.textField.placeholder = "Enter location name"
+                cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+                case 1:
+                cell.textField.placeholder = "Enter location"
+                case 2:
+                cell.textField.placeholder = "Enter location type"
+                default:
+                break
+            }
         }
         return cell
     }
