@@ -60,6 +60,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func saveButtonPressed() {
+        print("save button pressed")
         let place: Place
         var image: UIImage?
         if imageIsChanged {
@@ -83,21 +84,19 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         navigationController?.popToRootViewController(animated: true)
     }
     
-    private func setUpEdittingScreen() {
+    private func setUpEditingScreen() {
         if currentPlace != nil {
-            setupNavigationBarForEdittingScreen()
+            setupNavigationBarForEditingScreen()
             imageIsChanged = true
             guard let image = currentPlace?.imageData else { return }
             header.image.contentMode = .scaleAspectFit
             header.image.image = UIImage(data: image)
-            
         }
     }
     
-    private func setupNavigationBarForEdittingScreen() {
+    private func setupNavigationBarForEditingScreen() {
         title = currentPlace?.name
         saveButton.isEnabled = true
-        
     }
 
     //MARK: LIFECYCLE
@@ -105,7 +104,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        setUpEdittingScreen()
+        setUpEditingScreen()
     }
 }
 
@@ -125,7 +124,6 @@ extension NewPlaceViewController: UITableViewDataSource {
             switch indexPath.row {
                 case 0:
                 cell.textField.text = currentPlace?.name
-                cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
                 case 1:
                 cell.textField.text = currentPlace?.location
                 case 2:
@@ -190,19 +188,27 @@ extension NewPlaceViewController: UITextFieldDelegate {
             saveButton.isEnabled = false
         }
     }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.addTarget(self, action: #selector(valueChanged), for: .editingChanged)
+    }
+    
+    @objc func valueChanged(_ textField: UITextField){
         switch textField.tag {
         case 0:
             name = textField.text
+            print("name: \(String(describing: name))")
         case 1:
             location = textField.text
+            print("location: \(String(describing: location))")
         case 2:
             type = textField.text
+            print("type: \(String(describing: type))")
         default:
             break
         }
     }
+
     
     // KEYBOARD ADJUSTING
     @objc func adjustForKeyboard(notification: Notification) {
@@ -249,7 +255,6 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
 
 private extension NewPlaceViewController {
     func setupViews() {
-        navigationController?.navigationBar.topItem?.title = "My List"
         view.addSubview(tableView)
         view.backgroundColor = .systemBackground
         let constraints = [
@@ -264,9 +269,10 @@ private extension NewPlaceViewController {
         saveButton.isEnabled = false
         
         //KEYBOARD NOTIFICATIONS
-    
+
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 }
+

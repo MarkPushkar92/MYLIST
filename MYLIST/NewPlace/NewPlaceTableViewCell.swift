@@ -7,8 +7,9 @@
 
 import UIKit
 
-class NewPlaceTableViewCell: UITableViewCell {
 
+class NewPlaceTableViewCell: UITableViewCell {
+    
     var textField: UITextField = {
         let textField = UITextField()
         textField.toAutoLayout()
@@ -25,6 +26,9 @@ class NewPlaceTableViewCell: UITableViewCell {
     }
     
     func setupViews() {
+        
+        textField.toAutoLayout()
+        
         contentView.addSubview(textField)
         let constraints = [
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
@@ -36,5 +40,4 @@ class NewPlaceTableViewCell: UITableViewCell {
     }
 
 }
-
 
