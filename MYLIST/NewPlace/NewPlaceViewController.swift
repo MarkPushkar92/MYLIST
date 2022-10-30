@@ -91,6 +91,9 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             guard let image = currentPlace?.imageData else { return }
             header.image.contentMode = .scaleAspectFit
             header.image.image = UIImage(data: image)
+            name = currentPlace?.name
+            location = currentPlace?.location
+            type = currentPlace?.type
         }
     }
     
@@ -213,10 +216,8 @@ extension NewPlaceViewController: UITextFieldDelegate {
     // KEYBOARD ADJUSTING
     @objc func adjustForKeyboard(notification: Notification) {
         guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-
         let keyboardScreenEndFrame = keyboardValue.cgRectValue
         let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-
         if notification.name == UIResponder.keyboardWillHideNotification {
             tableView.contentInset = .zero
         } else {
