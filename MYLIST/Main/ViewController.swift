@@ -14,6 +14,13 @@ class ViewController: UIViewController {
     
     var places: Results<Place>!
     
+    private let segmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["Date","Name"])
+        segmentedControl.addTarget(self, action: #selector(sortSelection), for: .valueChanged)
+        segmentedControl.toAutoLayout()
+        return segmentedControl
+    }()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = .white
@@ -25,19 +32,41 @@ class ViewController: UIViewController {
     }()
     
     private let cellID = "cellID"
-   
     
+    private var ascendindSorting = true
+//
+//    let sortButton = UIBarButtonItem(image: UIImage(named: "AZ"), style: .plain, target: self, action: #selector(reversedSorting))
+   
     //MARK: FUNCS
     
-    @objc func addButtonPressed() {
-        print("button pressed")
+    @objc private func addButtonPressed() {
         navigationController?.pushViewController(NewPlaceViewController(), animated: true)
     }
     
+    @objc private func reversedSorting() {
+        print("reversed sorting button pressed")
+        ascendindSorting.toggle()
+        if ascendindSorting {
+            navigationItem.leftBarButtonItem?.image = UIImage(named: "ZA")
+        } else {
+            navigationItem.leftBarButtonItem?.image = UIImage(named: "AZ")
+        }
+        sorting()
+    }
+    
+    @objc private func sortSelection(_ sender: UISegmentedControl) {
+        sorting()
+    }
+    
+    private func sorting() {
+        if segmentedControl.selectedSegmentIndex == 0 {
+            places = places.sorted(byKeyPath: "date", ascending: ascendindSorting)
+        } else {
+            places = places.sorted(byKeyPath: "name", ascending: ascendindSorting)
+        }
+        tableView.reloadData()
+    }
     //MARK: LIFECYCLE
-    
-    
-    // gotta fix it later
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -94,11 +123,15 @@ extension ViewController: UITableViewDelegate {
 
 private extension ViewController {
     func setupViews() {
+        view.addSubview(segmentedControl)
         navigationController?.navigationBar.topItem?.title = "My List"
         view.addSubview(tableView)
         view.backgroundColor = .systemBackground
         let constraints = [
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -106,8 +139,9 @@ private extension ViewController {
         NSLayoutConstraint.activate(constraints)
         let addPlaceButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
         navigationItem.rightBarButtonItem = addPlaceButton
+        
+        let sortButton = UIBarButtonItem(image: UIImage(named: "AZ"), style: .plain, target: self, action: #selector(reversedSorting))
+        
+        navigationItem.leftBarButtonItem = sortButton
     }
-    
-    
 }
-

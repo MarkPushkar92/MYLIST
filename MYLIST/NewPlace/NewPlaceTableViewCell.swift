@@ -26,9 +26,6 @@ class NewPlaceTableViewCell: UITableViewCell {
     }
     
     func setupViews() {
-        
-        textField.toAutoLayout()
-        
         contentView.addSubview(textField)
         let constraints = [
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),

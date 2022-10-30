@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -21,6 +22,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigation
         window?.makeKeyAndVisible()
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        
+        // realm version configuration / version 1 - date sorting method
+        
+        let config = Realm.Configuration(
+            schemaVersion: 1, // Set the new schema version.
+            migrationBlock: { migration, oldSchemaVersion in
+                if oldSchemaVersion < 1 {
+                }
+            }
+        )
+        Realm.Configuration.defaultConfiguration = config
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
