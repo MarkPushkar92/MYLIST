@@ -49,7 +49,6 @@ class TableViewCell: UITableViewCell {
         setupViews()
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -69,10 +68,7 @@ class TableViewCell: UITableViewCell {
             labelsStackView.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 20),
             labelsStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             labelsStackView.heightAnchor.constraint(equalTo: image.heightAnchor)
-            
         ]
-        
         NSLayoutConstraint.activate(constraints)
     }
-
 }

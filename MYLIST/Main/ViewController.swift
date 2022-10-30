@@ -16,7 +16,6 @@ class ViewController: UIViewController {
     
     private let segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["Date","Name"])
-        segmentedControl.addTarget(self, action: #selector(sortSelection), for: .valueChanged)
         segmentedControl.toAutoLayout()
         return segmentedControl
     }()
@@ -34,9 +33,7 @@ class ViewController: UIViewController {
     private let cellID = "cellID"
     
     private var ascendindSorting = true
-//
-//    let sortButton = UIBarButtonItem(image: UIImage(named: "AZ"), style: .plain, target: self, action: #selector(reversedSorting))
-   
+
     //MARK: FUNCS
     
     @objc private func addButtonPressed() {
@@ -139,9 +136,8 @@ private extension ViewController {
         NSLayoutConstraint.activate(constraints)
         let addPlaceButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
         navigationItem.rightBarButtonItem = addPlaceButton
-        
         let sortButton = UIBarButtonItem(image: UIImage(named: "AZ"), style: .plain, target: self, action: #selector(reversedSorting))
-        
         navigationItem.leftBarButtonItem = sortButton
+        segmentedControl.addTarget(self, action: #selector(sortSelection), for: .valueChanged)
     }
 }
