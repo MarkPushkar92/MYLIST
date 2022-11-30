@@ -29,6 +29,8 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(NewPlaceTableViewCell.self, forCellReuseIdentifier: cellID)
+        // not sure if it's a good decision
+        tableView.register(RatingViewCell.self, forCellReuseIdentifier: "rating")
         return tableView
     }()
     
@@ -116,38 +118,44 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
 extension NewPlaceViewController: UITableViewDataSource {
          
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 4
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
-        cell.textField.delegate = self
-        cell.textField.tag = indexPath.row
-        if currentPlace != nil {
-            switch indexPath.row {
-                case 0:
-                cell.textField.text = currentPlace?.name
-                case 1:
-                cell.textField.text = currentPlace?.location
-                case 2:
-                cell.textField.text = currentPlace?.type
-                default:
-                break
-            }
+        if indexPath.row == 3 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "rating", for: indexPath) as! RatingViewCell
+            
+            return cell
         } else {
-            switch indexPath.row {
-                case 0:
-                cell.textField.placeholder = "Enter location name"
-                cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
-                case 1:
-                cell.textField.placeholder = "Enter location"
-                case 2:
-                cell.textField.placeholder = "Enter location type"
-                default:
-                break
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
+            cell.textField.delegate = self
+            cell.textField.tag = indexPath.row
+            if currentPlace != nil {
+                switch indexPath.row {
+                    case 0:
+                    cell.textField.text = currentPlace?.name
+                    case 1:
+                    cell.textField.text = currentPlace?.location
+                    case 2:
+                    cell.textField.text = currentPlace?.type
+                    default:
+                    break
+                }
+            } else {
+                switch indexPath.row {
+                    case 0:
+                    cell.textField.placeholder = "Enter location name"
+                    cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+                    case 1:
+                    cell.textField.placeholder = "Enter location"
+                    case 2:
+                    cell.textField.placeholder = "Enter location type"
+                    default:
+                    break
+                }
             }
+            return cell
         }
-        return cell
     }
     
 //MARK: EXTENSIONS TABLEVIEW DATA SOURCE (HEADER)
@@ -171,7 +179,11 @@ extension NewPlaceViewController: UITableViewDataSource {
 
 extension NewPlaceViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        if indexPath.row == 3 {
+            return 100
+        } else {
+            return 50
+        }
     }
 }
 
