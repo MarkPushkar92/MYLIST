@@ -51,10 +51,10 @@ class RatingControll: UIStackView {
             button.setImage(filledStar, for: .selected)
             button.setImage(highlightedStar, for: .highlighted)
             button.setImage(highlightedStar, for: [.highlighted, .selected])
-            addArrangedSubview(button)
+            addArrangedSubview(button)
             ratingButtons.append(button)
         }
-      //  updateButtonSelectionStates()
+        updateButtonSelectionStates()
         print(ratingButtons.count)
     }
     
