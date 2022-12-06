@@ -11,8 +11,6 @@ class RatingControll: UIStackView {
     
     // MARK: Propreties
     
-   // private var starSize: CGSize = CGSize(width: 44, height: 44)
-    
     private var starCount: Int = 5
     
     private var ratingButtons = [UIButton]()
@@ -55,12 +53,9 @@ class RatingControll: UIStackView {
             ratingButtons.append(button)
         }
         updateButtonSelectionStates()
-        print(ratingButtons.count)
     }
     
     @objc func ratingButtonTapped(button: UIButton) {
-        print("butttonnn presssed")
-        
         guard let index = ratingButtons.firstIndex(of: button) else  { return }
         let selectedRating = index + 1
         if selectedRating == rating {

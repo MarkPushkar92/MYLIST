@@ -17,6 +17,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     private var name: String?
     private var location: String?
     private var type: String?
+    static var rating: Double = 0.0
     
     private var imageIsChanged = false
     
@@ -71,7 +72,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             image = UIImage(named: "imagePlaceholder")
         }
         let imageData = image?.pngData()
-        place = Place(name: name ?? "name's not set", location: location, type: type, imageData: imageData)
+        place = Place(name: name ?? "Name's not set", location: location, type: type, imageData: imageData, rating: NewPlaceViewController.rating)
         
         if currentPlace != nil {
             try! realm.write({
@@ -79,6 +80,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
                 currentPlace?.location = place.location
                 currentPlace?.type = place.type
                 currentPlace?.imageData = imageData
+                currentPlace?.rating = place.rating
             })
         } else {
             StorageManager.saveObject(place)
@@ -96,6 +98,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             name = currentPlace?.name
             location = currentPlace?.location
             type = currentPlace?.type
+            NewPlaceViewController.rating = currentPlace?.rating ?? 0.0
         }
     }
     
@@ -124,6 +127,9 @@ extension NewPlaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "rating", for: indexPath) as! RatingViewCell
+            
+            
+            cell.rating = Int(NewPlaceViewController.rating)
             
             return cell
         } else {

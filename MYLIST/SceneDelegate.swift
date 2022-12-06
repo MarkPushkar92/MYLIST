@@ -25,10 +25,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // realm version configuration / version 1 - date sorting method
         
+        let schemaVersion: UInt64 = 2
+        
         let config = Realm.Configuration(
-            schemaVersion: 1, // Set the new schema version.
+            schemaVersion: schemaVersion, // Set the new schema version.
             migrationBlock: { migration, oldSchemaVersion in
-                if oldSchemaVersion < 1 {
+                if oldSchemaVersion < schemaVersion {
                 }
             }
         )
