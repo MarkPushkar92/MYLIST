@@ -127,10 +127,7 @@ extension NewPlaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "rating", for: indexPath) as! RatingViewCell
-            
-            
             cell.rating = Int(NewPlaceViewController.rating)
-            
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
