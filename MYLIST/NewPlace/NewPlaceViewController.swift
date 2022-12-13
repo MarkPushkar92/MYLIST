@@ -41,6 +41,11 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
    
     //MARK: FUNCS
     
+    @objc private func locationButtonPressed() {
+        navigationController?.pushViewController(MapViewController(), animated: true)
+        print("go to map")
+    }
+    
     @objc func handleTapOnHeader() {
         let cameraImage = UIImage(named: "camera")
         let photoLibImage = UIImage(named: "photo")
@@ -94,6 +99,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             imageIsChanged = true
             guard let image = currentPlace?.imageData else { return }
             header.image.contentMode = .scaleAspectFit
+            header.image.backgroundColor = .systemBackground
             header.image.image = UIImage(data: image)
             name = currentPlace?.name
             location = currentPlace?.location
@@ -167,7 +173,7 @@ extension NewPlaceViewController: UITableViewDataSource {
         let headerview = header
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnHeader))
         tapRecognizer.delegate = self
-        tapRecognizer.numberOfTapsRequired = 1
+        tapRecognizer.numberOfTapsRequired = 2
         tapRecognizer.numberOfTouchesRequired = 1
         headerview.addGestureRecognizer(tapRecognizer)
         return headerview
@@ -176,7 +182,26 @@ extension NewPlaceViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 220
     }
+    
+    //MARK: EXTENSIONS TABLEVIEW DATA SOURCE (FOOTTER)
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footer = FooterView()
+        footer.button.addTarget(self, action: #selector(locationButtonPressed), for: .touchUpInside)
+        return footer
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 100
+    }
 }
+
+
+
+
+    
+   
+
 
 //MARK: EXTENSIONS TABLEVIEW DELEGATE
 

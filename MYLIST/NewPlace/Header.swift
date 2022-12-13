@@ -34,7 +34,8 @@ class NewPlaceHeaderView: UITableViewHeaderFooterView {
             image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             image.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
             image.topAnchor.constraint(equalTo: contentView.topAnchor),
-            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
         ]
         NSLayoutConstraint.activate(constraints)
     }
