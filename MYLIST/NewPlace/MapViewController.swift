@@ -11,6 +11,8 @@ import MapKit
 class MapViewController: UIViewController {
     
     var place: Place!
+    
+    private let annotationID = "annotationID"
 
     let map = MKMapView()
     
@@ -38,6 +40,7 @@ class MapViewController: UIViewController {
         super.viewDidLoad()
         setupPlacemark()
         setupViews()
+        map.delegate = self
     }
     
     private func setupViews() {
@@ -52,4 +55,26 @@ class MapViewController: UIViewController {
         NSLayoutConstraint.activate(constraints)
     }
 
+}
+
+extension MapViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard !(annotation is MKUserLocation) else { return nil }
+        var annotationView = map.dequeueReusableAnnotationView(withIdentifier: annotationID) as? MKPinAnnotationView
+        if annotationView == nil {
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: annotationID)
+            annotationView?.canShowCallout = true
+            
+        }
+        if let imageData = place.imageData {
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+            imageView.layer.cornerRadius = 10
+            imageView.clipsToBounds = true
+            imageView.image = UIImage(data: imageData)
+            annotationView?.rightCalloutAccessoryView = imageView
+        }
+        
+        return annotationView
+    }
 }
