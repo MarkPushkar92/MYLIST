@@ -42,9 +42,11 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     //MARK: FUNCS
     
     @objc private func locationButtonPressed() {
-        
         let mapVC = MapViewController()
-        mapVC.place = currentPlace
+        mapVC.place.name = name ?? ""
+        mapVC.place.location = location
+        mapVC.place.type = type
+        mapVC.place.imageData = header.image.image?.pngData()
         navigationController?.pushViewController(mapVC, animated: true)
         print("go to map")
     }
