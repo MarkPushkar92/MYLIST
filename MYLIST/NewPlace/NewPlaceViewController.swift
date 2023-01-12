@@ -14,9 +14,17 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     var currentPlace: Place?
     
-    private var name: String?
-    private var location: String?
-    private var type: String?
+    private let nameTextField = UITextField()
+    private let locationTextField = UITextField()
+    private let typeTextField = UITextField()
+    
+    private func setupTextFields() {
+        let textfields = [nameTextField, locationTextField, typeTextField]
+        textfields.forEach {
+            $0.delegate = self
+        }
+    }
+
     static var rating: Double = 0.0
     
     private var imageIsChanged = false
@@ -42,22 +50,23 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @objc private func locationButtonPressedFromTextField() {
         let mapVC = MapViewController()
-        mapVC.place.name = name ?? ""
-        mapVC.place.location = location
-        mapVC.place.type = type
+        mapVC.place.name = nameTextField.text ?? ""
+        mapVC.place.location = locationTextField.text
+        mapVC.place.type = typeTextField.text
         mapVC.place.imageData = header.image.image?.pngData()
         mapVC.marker.isHidden = false
-        mapVC.adressLabel.isHidden = false
+        mapVC.addressLabel.isHidden = false
         mapVC.doneButton.isHidden = false
-        navigationController?.pushViewController(mapVC, animated: true)
+        mapVC.mapViewControllerDelegate = self
+        present(mapVC, animated: true)
         print("go to map")
     }
     
     @objc private func locationButtonPressed() {
         let mapVC = MapViewController()
-        mapVC.place.name = name ?? ""
-        mapVC.place.location = location
-        mapVC.place.type = type
+        mapVC.place.name = nameTextField.text ?? ""
+        mapVC.place.location = locationTextField.text
+        mapVC.place.type = typeTextField.text
         mapVC.place.imageData = header.image.image?.pngData()
         navigationController?.pushViewController(mapVC, animated: true)
         print("go to map")
@@ -94,8 +103,9 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             image = UIImage(named: "imagePlaceholder")
         }
         let imageData = image?.pngData()
-        place = Place(name: name ?? "Name's not set", location: location, type: type, imageData: imageData, rating: NewPlaceViewController.rating)
         
+        place = Place(name: nameTextField.text ?? "", location: locationTextField.text, type: typeTextField.text, imageData: imageData, rating: NewPlaceViewController.rating)
+
         if currentPlace != nil {
             try! realm.write({
                 currentPlace?.name = place.name
@@ -118,9 +128,6 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
             header.image.contentMode = .scaleAspectFit
             header.image.backgroundColor = .systemBackground
             header.image.image = UIImage(data: image)
-            name = currentPlace?.name
-            location = currentPlace?.location
-            type = currentPlace?.type
             NewPlaceViewController.rating = currentPlace?.rating ?? 0.0
         }
     }
@@ -136,6 +143,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLoad()
         setupViews()
         setUpEditingScreen()
+        
     }
 }
 
@@ -154,34 +162,40 @@ extension NewPlaceViewController: UITableViewDataSource {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! NewPlaceTableViewCell
-            cell.textField.delegate = self
-            cell.textField.tag = indexPath.row
             if currentPlace != nil {
                 switch indexPath.row {
                     case 0:
-                    cell.textField.text = currentPlace?.name
+                    cell.textField = nameTextField
+                    cell.textField!.text = currentPlace?.name
                     case 1:
-                    cell.textField.text = currentPlace?.location
-                    cell.button.isHidden = false
-                    cell.button.addTarget(self, action: #selector(locationButtonPressedFromTextField), for: .touchUpInside)
+                    cell.textField = locationTextField
+                    cell.textField!.text = currentPlace?.location
+                    cell.selectLocationbutton.isHidden = false
+                    cell.selectLocationbutton.addTarget(self, action: #selector(locationButtonPressedFromTextField), for: .touchUpInside)
                     case 2:
-                    cell.textField.text = currentPlace?.type
+                    cell.textField = typeTextField
+                    cell.textField!.text = currentPlace?.type
                     default:
                     break
                 }
             } else {
                 switch indexPath.row {
                     case 0:
-                    cell.textField.placeholder = "Enter location name"
-                    cell.textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+                    cell.textField = nameTextField
+                    cell.textField!.placeholder = "Enter location name"
+                    cell.textField!.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
                     case 1:
-                    cell.textField.placeholder = "Enter location"
+                    cell.textField = locationTextField
+                    cell.textField!.placeholder = "Enter location"
                     case 2:
-                    cell.textField.placeholder = "Enter location type"
+                    cell.textField = typeTextField
+                    cell.textField!.placeholder = "Enter location type"
                     default:
                     break
                 }
             }
+            setupTextFields()
+            cell.setupViews()
             return cell
         }
     }
@@ -243,27 +257,6 @@ extension NewPlaceViewController: UITextFieldDelegate {
         }
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.addTarget(self, action: #selector(valueChanged), for: .editingChanged)
-    }
-    
-    @objc func valueChanged(_ textField: UITextField){
-        switch textField.tag {
-        case 0:
-            name = textField.text
-            print("name: \(String(describing: name))")
-        case 1:
-            location = textField.text
-            print("location: \(String(describing: location))")
-        case 2:
-            type = textField.text
-            print("type: \(String(describing: type))")
-        default:
-            break
-        }
-    }
-    
-
     // KEYBOARD ADJUSTING
     @objc func adjustForKeyboard(notification: Notification) {
         guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
@@ -328,3 +321,8 @@ private extension NewPlaceViewController {
     }
 }
 
+extension NewPlaceViewController: MapViewControllerDelegate {
+    func getAddress(address: String?) {
+        locationTextField.text = address
+    }
+}

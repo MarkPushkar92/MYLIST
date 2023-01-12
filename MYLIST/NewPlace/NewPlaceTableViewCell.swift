@@ -10,7 +10,7 @@ import UIKit
 
 class NewPlaceTableViewCell: UITableViewCell {
     
-    var button: UIButton = {
+    var selectLocationbutton: UIButton = {
         let button = UIButton()
         button.toAutoLayout()
         button.setImage(UIImage(named: "GetDirection"), for: .normal)
@@ -18,12 +18,8 @@ class NewPlaceTableViewCell: UITableViewCell {
         return button
     }()
     
-    var textField: UITextField = {
-        let textField = UITextField()
-        textField.toAutoLayout()
-        return textField
-    }()
-
+    var textField: UITextField?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -34,13 +30,16 @@ class NewPlaceTableViewCell: UITableViewCell {
     }
     
     func setupViews() {
+        
+        guard let textField = textField else { return }
+        textField.toAutoLayout()
         contentView.addSubview(textField)
-        textField.addSubview(button)
+        textField.addSubview(selectLocationbutton)
         let constraints = [
-            button.trailingAnchor.constraint(equalTo: textField.trailingAnchor, constant: -10),
-            button.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
-            button.heightAnchor.constraint(equalToConstant: 30),
-            button.widthAnchor.constraint(equalToConstant: 30),
+            selectLocationbutton.trailingAnchor.constraint(equalTo: textField.trailingAnchor, constant: -10),
+            selectLocationbutton.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+            selectLocationbutton.heightAnchor.constraint(equalToConstant: 30),
+            selectLocationbutton.widthAnchor.constraint(equalToConstant: 30),
             
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),

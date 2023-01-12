@@ -9,10 +9,14 @@ import UIKit
 import MapKit
 import CoreLocation
 
+protocol MapViewControllerDelegate {
+    func getAddress(address: String?)
+}
+
 class MapViewController: UIViewController {
     
     //MARK: UI properties
-    var adressLabel: UILabel = {
+    var addressLabel: UILabel = {
         let view = UILabel()
         view.toAutoLayout()
         view.sizeToFit()
@@ -49,6 +53,8 @@ class MapViewController: UIViewController {
     }()
     
     //MARK: properties
+    
+    var mapViewControllerDelegate: MapViewControllerDelegate?
     
     var place = Place()
     
@@ -158,11 +164,11 @@ class MapViewController: UIViewController {
             let buildNumber = placemark?.subThoroughfare
             DispatchQueue.main.async {
                 if streetName != nil && buildNumber != nil {
-                    self.adressLabel.text = "\(streetName!), \(buildNumber!)"
+                    self.addressLabel.text = "\(streetName!), \(buildNumber!)"
                 } else if streetName != nil {
-                    self.adressLabel.text = "\(streetName!)"
+                    self.addressLabel.text = "\(streetName!)"
                 } else {
-                    self.adressLabel.text = ""
+                    self.addressLabel.text = ""
                 }
             }
         }
@@ -182,11 +188,12 @@ class MapViewController: UIViewController {
     }
     
     @objc private func doneButtonPressed() {
-        navigationController?.popToRootViewController(animated: true)
+        mapViewControllerDelegate?.getAddress(address: addressLabel.text)
+        dismiss(animated: true)
     }
     
     private func setupViews() {
-        map.addSubviews(button, marker, adressLabel, doneButton)
+        map.addSubviews(button, marker, addressLabel, doneButton)
         view.addSubview(map)
         map.toAutoLayout()
         doneButton.addTarget(self, action: #selector(doneButtonPressed), for: .touchUpInside)
@@ -202,9 +209,9 @@ class MapViewController: UIViewController {
             doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
             
-            adressLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            adressLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            adressLabel.widthAnchor.constraint(equalTo: view.widthAnchor),
+            addressLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            addressLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            addressLabel.widthAnchor.constraint(equalTo: view.widthAnchor),
                         
             button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
