@@ -10,6 +10,14 @@ import UIKit
 
 class NewPlaceTableViewCell: UITableViewCell {
     
+    var button: UIButton = {
+        let button = UIButton()
+        button.toAutoLayout()
+        button.setImage(UIImage(named: "GetDirection"), for: .normal)
+        button.isHidden = true
+        return button
+    }()
+    
     var textField: UITextField = {
         let textField = UITextField()
         textField.toAutoLayout()
@@ -27,7 +35,13 @@ class NewPlaceTableViewCell: UITableViewCell {
     
     func setupViews() {
         contentView.addSubview(textField)
+        textField.addSubview(button)
         let constraints = [
+            button.trailingAnchor.constraint(equalTo: textField.trailingAnchor, constant: -10),
+            button.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+            button.heightAnchor.constraint(equalToConstant: 30),
+            button.widthAnchor.constraint(equalToConstant: 30),
+            
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
             textField.topAnchor.constraint(equalTo: contentView.topAnchor),

@@ -30,7 +30,6 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(NewPlaceTableViewCell.self, forCellReuseIdentifier: cellID)
-        // not sure if it's a good decision
         tableView.register(RatingViewCell.self, forCellReuseIdentifier: "rating")
         return tableView
     }()
@@ -40,6 +39,19 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
     private let saveButton  = UIBarButtonItem(title: "Save", style: .plain, target: nil, action: #selector(saveButtonPressed))
    
     //MARK: FUNCS
+    
+    @objc private func locationButtonPressedFromTextField() {
+        let mapVC = MapViewController()
+        mapVC.place.name = name ?? ""
+        mapVC.place.location = location
+        mapVC.place.type = type
+        mapVC.place.imageData = header.image.image?.pngData()
+        mapVC.marker.isHidden = false
+        mapVC.adressLabel.isHidden = false
+        mapVC.doneButton.isHidden = false
+        navigationController?.pushViewController(mapVC, animated: true)
+        print("go to map")
+    }
     
     @objc private func locationButtonPressed() {
         let mapVC = MapViewController()
@@ -150,6 +162,8 @@ extension NewPlaceViewController: UITableViewDataSource {
                     cell.textField.text = currentPlace?.name
                     case 1:
                     cell.textField.text = currentPlace?.location
+                    cell.button.isHidden = false
+                    cell.button.addTarget(self, action: #selector(locationButtonPressedFromTextField), for: .touchUpInside)
                     case 2:
                     cell.textField.text = currentPlace?.type
                     default:
@@ -201,13 +215,6 @@ extension NewPlaceViewController: UITableViewDataSource {
     }
 }
 
-
-
-
-    
-   
-
-
 //MARK: EXTENSIONS TABLEVIEW DELEGATE
 
 extension NewPlaceViewController: UITableViewDelegate {
@@ -219,7 +226,6 @@ extension NewPlaceViewController: UITableViewDelegate {
         }
     }
 }
-
 
 //MARK: EXTENSION FOR KEYGOARD AND TEXTFIELDS
 
