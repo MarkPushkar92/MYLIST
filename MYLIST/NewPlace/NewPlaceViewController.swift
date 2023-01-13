@@ -68,6 +68,7 @@ class NewPlaceViewController: UIViewController, UIGestureRecognizerDelegate {
         mapVC.place.location = locationTextField.text
         mapVC.place.type = typeTextField.text
         mapVC.place.imageData = header.image.image?.pngData()
+        mapVC.getDirectionsbutton.isHidden = false
         navigationController?.pushViewController(mapVC, animated: true)
         print("go to map")
     }

@@ -44,15 +44,24 @@ class MapViewController: UIViewController {
         return view
     }()
     
-    private let button: UIButton = {
+    private let userLocationbutton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "Location"), for: .normal)
         button.toAutoLayout()
         return button
-        
+    }()
+    
+     let getDirectionsbutton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "GetDirection"), for: .normal)
+        button.isHidden = true
+        button.toAutoLayout()
+        return button
     }()
     
     //MARK: properties
+    
+    private var placeCoordinate: CLLocationCoordinate2D?
     
     var mapViewControllerDelegate: MapViewControllerDelegate?
     
@@ -75,6 +84,49 @@ class MapViewController: UIViewController {
     }
     
     //MARK: Location and Map Methods
+    
+    @objc private func getDirections() {
+        guard let location = locationManager.location?.coordinate else {
+            showAlert(title: "Error", message: "Current location's not found")
+            return
+        }
+        guard let request = createDirectionsRequest(from: location) else {
+            showAlert(title: "Error", message: "Destination's not found")
+            return
+        }
+        let directions = MKDirections(request: request)
+        directions.calculate { response, error in
+            if let error = error {
+                print(error)
+                return
+            }
+            guard let response = response else {
+                self.showAlert(title: "Error", message: "Direction's not available")
+                return
+            }
+            for route in response.routes {
+                self.map.addOverlay(route.polyline)
+                self.map.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+                let distance = String(format: "%.1f", route.distance / 1000)
+                let timeInterval = route.expectedTravelTime
+                print("Расстояние до места \(distance) км")
+                print("Время в пути \(timeInterval) сек.")
+            }
+        }
+    }
+    
+    private func createDirectionsRequest(from coordinate: CLLocationCoordinate2D) -> MKDirections.Request? {
+        guard let destinationCoordinate = placeCoordinate else { return nil }
+        let startingLocation = MKPlacemark(coordinate: coordinate)
+        let destination = MKPlacemark(coordinate: destinationCoordinate)
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: startingLocation)
+        request.destination = MKMapItem(placemark: destination)
+        request.transportType = .walking
+        request.requestsAlternateRoutes = true
+        return request
+    }
+    
     
     private func checkLOcationServises() {
         if CLLocationManager.locationServicesEnabled() {
@@ -132,6 +184,7 @@ class MapViewController: UIViewController {
             annotation.subtitle = self.place.type
             guard let placemarkLocation = placemark?.location else { return }
             annotation.coordinate = placemarkLocation.coordinate
+            self.placeCoordinate = placemarkLocation.coordinate
             self.map.showAnnotations([annotation], animated: true)
             self.map.selectAnnotation(annotation, animated: true)
         }
@@ -193,11 +246,12 @@ class MapViewController: UIViewController {
     }
     
     private func setupViews() {
-        map.addSubviews(button, marker, addressLabel, doneButton)
+        map.addSubviews(userLocationbutton, marker, addressLabel, doneButton, getDirectionsbutton)
         view.addSubview(map)
         map.toAutoLayout()
+        getDirectionsbutton.addTarget(self, action: #selector(getDirections), for: .touchUpInside)
         doneButton.addTarget(self, action: #selector(doneButtonPressed), for: .touchUpInside)
-        button.addTarget(self, action: #selector(centerViewInUserLocation), for: .touchUpInside)
+        userLocationbutton.addTarget(self, action: #selector(centerViewInUserLocation), for: .touchUpInside)
         let constraints = [
             marker.widthAnchor.constraint(equalToConstant: 50),
             marker.heightAnchor.constraint(equalToConstant: 50),
@@ -209,14 +263,19 @@ class MapViewController: UIViewController {
             doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
             
+            getDirectionsbutton.widthAnchor.constraint(equalToConstant: 50),
+            getDirectionsbutton.heightAnchor.constraint(equalToConstant: 50),
+            getDirectionsbutton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            getDirectionsbutton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            
             addressLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             addressLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             addressLabel.widthAnchor.constraint(equalTo: view.widthAnchor),
                         
-            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
-            button.widthAnchor.constraint(equalToConstant: 50),
-            button.heightAnchor.constraint(equalToConstant: 50),
+            userLocationbutton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            userLocationbutton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            userLocationbutton.widthAnchor.constraint(equalToConstant: 50),
+            userLocationbutton.heightAnchor.constraint(equalToConstant: 50),
 
             map.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             map.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -247,6 +306,13 @@ extension MapViewController: MKMapViewDelegate {
             annotationView?.rightCalloutAccessoryView = imageView
         }
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay as! MKPolyline)
+
+        renderer.strokeColor = .blue
+        return renderer
     }
 }
 
