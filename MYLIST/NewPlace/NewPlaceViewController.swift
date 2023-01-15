@@ -251,7 +251,7 @@ extension NewPlaceViewController: UITextFieldDelegate {
     }
     
     @objc private func textFieldChanged(textField: UITextField) {
-        if textField.text?.isEmpty == false {
+        if nameTextField.text?.isEmpty == false {
             saveButton.isEnabled = true
         } else {
             saveButton.isEnabled = false
@@ -313,7 +313,7 @@ private extension NewPlaceViewController {
         navigationItem.rightBarButtonItem = saveButton
         tableView.keyboardDismissMode = .interactive
         saveButton.isEnabled = false
-        
+        nameTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         //KEYBOARD NOTIFICATIONS
 
         let notificationCenter = NotificationCenter.default

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		631D7A332973E6CD003FAC73 /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631D7A322973E6CD003FAC73 /* MapManager.swift */; };
 		633FE02D28DD88A20062D334 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633FE02C28DD88A20062D334 /* Header.swift */; };
 		635631EC28D44E9100640A5C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635631EB28D44E9100640A5C /* Model.swift */; };
 		635631EE28D4543B00640A5C /* NewPlaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635631ED28D4543B00640A5C /* NewPlaceViewController.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		631D7A322973E6CD003FAC73 /* MapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
 		633FE02C28DD88A20062D334 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		635631EB28D44E9100640A5C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		635631ED28D4543B00640A5C /* NewPlaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPlaceViewController.swift; sourceTree = "<group>"; };
@@ -57,6 +59,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		631D7A312973E6AB003FAC73 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				63719CAD2940856400A5E9F8 /* MapViewController.swift */,
+				631D7A322973E6CD003FAC73 /* MapManager.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
 		63B6908E28CF186700305118 = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +92,7 @@
 				63F9924528D5AACD006A60EE /* Main */,
 				63F9924628D5AAEC006A60EE /* Common */,
 				63F9924728D5AB14006A60EE /* NewPlace */,
+				631D7A312973E6AB003FAC73 /* Map */,
 				63B690A328CF186900305118 /* Assets.xcassets */,
 				63B690A828CF186900305118 /* Info.plist */,
 			);
@@ -114,7 +126,6 @@
 				63719CAF29408C9E00A5E9F8 /* FooterView.swift */,
 				633FE02C28DD88A20062D334 /* Header.swift */,
 				63F9924828D5AB3F006A60EE /* NewPlaceTableViewCell.swift */,
-				63719CAD2940856400A5E9F8 /* MapViewController.swift */,
 			);
 			path = NewPlace;
 			sourceTree = "<group>";
@@ -199,6 +210,7 @@
 				63C2279229377D280029B7C8 /* RatingViewCell.swift in Sources */,
 				633FE02D28DD88A20062D334 /* Header.swift in Sources */,
 				63B690B528CF210D00305118 /* CommonExtensions.swift in Sources */,
+				631D7A332973E6CD003FAC73 /* MapManager.swift in Sources */,
 				63B6909F28CF186700305118 /* ViewController.swift in Sources */,
 				63B690B328CF20BD00305118 /* TableViewCell.swift in Sources */,
 				635631EC28D44E9100640A5C /* Model.swift in Sources */,
